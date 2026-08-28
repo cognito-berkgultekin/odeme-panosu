@@ -12,8 +12,8 @@
   --txt:#eef2f8;
   --muted:#8e9bb3;
   --dim:#65718a;
-  --acc:#00e0a4;
-  --acc-2:#38bdf8;
+  --acc:#f0c000;
+  --acc-2:#d99a14;
   --love:#f472b6;
   --warn:#fbbf24;
   --bad:#fb7185;
@@ -39,9 +39,9 @@ body{
 .bg-glow{
   position:fixed; inset:0; z-index:0; pointer-events:none;
   background:
-    radial-gradient(720px 420px at 12% -8%, rgba(0,224,164,.16), transparent 62%),
-    radial-gradient(760px 460px at 92% 4%, rgba(56,189,248,.13), transparent 60%),
-    radial-gradient(900px 600px at 50% 108%, rgba(129,140,248,.10), transparent 62%),
+    radial-gradient(720px 420px at 12% -8%, rgba(240,192,0,.16), transparent 62%),
+    radial-gradient(760px 460px at 92% 4%, rgba(217,154,20,.13), transparent 60%),
+    radial-gradient(900px 600px at 50% 108%, rgba(244,114,182,.10), transparent 62%),
     linear-gradient(180deg,var(--bg) 0%, var(--bg-2) 55%, var(--bg) 100%);
 }
 
@@ -57,16 +57,10 @@ body{
   gap:16px; margin-bottom:44px;
 }
 .brand{display:flex;align-items:center;gap:11px}
-.brand-mark{
-  width:26px;height:26px;border-radius:8px;
-  background:conic-gradient(from 140deg,var(--acc),var(--acc-2),var(--acc));
-  box-shadow:0 0 22px rgba(0,224,164,.35);
-  position:relative;
+.brand-logo{
+  height:30px; width:auto; display:block;
+  filter:drop-shadow(0 0 18px rgba(240,192,0,.28));
 }
-.brand-mark::after{
-  content:"";position:absolute;inset:7px;border-radius:3px;background:var(--bg);
-}
-.brand-name{font-weight:800; letter-spacing:-.02em; font-size:19px}
 .live-pill{
   display:inline-flex;align-items:center;gap:8px;
   font-size:12.5px;font-weight:600;color:var(--muted);
@@ -75,11 +69,11 @@ body{
 }
 .dot{
   width:7px;height:7px;border-radius:50%;background:var(--acc);
-  box-shadow:0 0 0 0 rgba(0,224,164,.6); animation:pulse 2s infinite;
+  box-shadow:0 0 0 0 rgba(240,192,0,.6); animation:pulse 2s infinite;
 }
 @keyframes pulse{
-  70%{box-shadow:0 0 0 9px rgba(0,224,164,0)}
-  100%{box-shadow:0 0 0 0 rgba(0,224,164,0)}
+  70%{box-shadow:0 0 0 9px rgba(240,192,0,0)}
+  100%{box-shadow:0 0 0 0 rgba(240,192,0,0)}
 }
 
 /* ---------- Hero ---------- */
@@ -129,16 +123,16 @@ body{
 .counters .card{margin-bottom:0}
 
 .counter-card{
-  background:linear-gradient(160deg,rgba(0,224,164,.075),rgba(255,255,255,.03) 45%);
-  border-color:rgba(0,224,164,.22);
+  background:linear-gradient(160deg,rgba(240,192,0,.075),rgba(255,255,255,.03) 45%);
+  border-color:rgba(240,192,0,.22);
 }
 .counter-card.is-late{
   background:linear-gradient(160deg,rgba(251,113,133,.09),rgba(255,255,255,.03) 45%);
   border-color:rgba(251,113,133,.28);
 }
 .counter-card.geri{
-  background:linear-gradient(160deg,rgba(56,189,248,.09),rgba(255,255,255,.03) 45%);
-  border-color:rgba(56,189,248,.24);
+  background:linear-gradient(160deg,rgba(217,154,20,.09),rgba(255,255,255,.03) 45%);
+  border-color:rgba(217,154,20,.24);
 }
 .counter-card.geri.is-late{
   background:linear-gradient(160deg,rgba(251,113,133,.11),rgba(255,255,255,.03) 45%);
@@ -152,10 +146,10 @@ body{
   font-size:clamp(28px,6.4vw,50px); line-height:1;
   letter-spacing:-.03em;
   font-variant-numeric:tabular-nums;
-  background:linear-gradient(180deg,#fff,#9fb2cd);
+  background:linear-gradient(180deg,#fff,#dcc9a0);
   -webkit-background-clip:text; background-clip:text; color:transparent;
 }
-.geri .num{background:linear-gradient(180deg,#fff,#a8d8f5);-webkit-background-clip:text;background-clip:text}
+.geri .num{background:linear-gradient(180deg,#fff,#e8c97a);-webkit-background-clip:text;background-clip:text}
 .is-late .num{background:linear-gradient(180deg,#fff,#ffb0bd);-webkit-background-clip:text;background-clip:text}
 .lbl{
   margin-top:9px;font-size:11px;font-weight:600;letter-spacing:.14em;
@@ -195,8 +189,13 @@ body{
   width:13px;height:13px;border-radius:50%;
   background:var(--bg-2);border:2.5px solid var(--line-2);margin-top:5px;flex:none;
 }
-.tl-item.done .tl-dot{background:var(--acc);border-color:var(--acc);box-shadow:0 0 14px rgba(0,224,164,.45)}
-.tl-item.now .tl-dot{background:var(--warn);border-color:var(--warn);box-shadow:0 0 14px rgba(251,191,36,.5)}
+.tl-item.done .tl-dot{background:var(--acc);border-color:var(--acc);box-shadow:0 0 14px rgba(240,192,0,.45)}
+.tl-item.now .tl-dot{background:var(--warn);border-color:var(--warn);animation:tlPulse 2s infinite}
+@keyframes tlPulse{
+  0%{box-shadow:0 0 14px rgba(251,191,36,.5), 0 0 0 0 rgba(251,191,36,.5)}
+  70%{box-shadow:0 0 14px rgba(251,191,36,.5), 0 0 0 10px rgba(251,191,36,0)}
+  100%{box-shadow:0 0 14px rgba(251,191,36,.5), 0 0 0 0 rgba(251,191,36,0)}
+}
 .tl-item.late .tl-dot{background:var(--bad);border-color:var(--bad);box-shadow:0 0 14px rgba(251,113,133,.5)}
 .tl-item.love .tl-dot{background:var(--love);border-color:var(--love);box-shadow:0 0 14px rgba(244,114,182,.5)}
 .tl-line{width:2px;flex:1;background:var(--line);min-height:22px;margin:4px 0}
@@ -209,8 +208,8 @@ body{
 
 /* ---------- Dunyada neler oldu ---------- */
 .world-card{
-  background:linear-gradient(150deg,rgba(56,189,248,.07),rgba(255,255,255,.025));
-  border-color:rgba(56,189,248,.18);
+  background:linear-gradient(150deg,rgba(217,154,20,.07),rgba(255,255,255,.025));
+  border-color:rgba(217,154,20,.18);
 }
 .events{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
 .ev{
@@ -228,8 +227,8 @@ body{
 
 /* ---------- Sevgi & minnet ---------- */
 .love-card{
-  background:linear-gradient(150deg,rgba(129,140,248,.11),rgba(0,224,164,.07) 60%,rgba(255,255,255,.03));
-  border-color:rgba(129,140,248,.24);
+  background:linear-gradient(150deg,rgba(244,114,182,.11),rgba(240,192,0,.07) 60%,rgba(255,255,255,.03));
+  border-color:rgba(244,114,182,.24);
   text-align:center;
 }
 .love-head{
@@ -247,7 +246,7 @@ body{
   font-size:clamp(40px,10vw,78px);line-height:1.05;letter-spacing:-.035em;
   font-variant-numeric:tabular-nums;
   margin-top:22px;
-  background:linear-gradient(100deg,#00e0a4,#38bdf8,#a5b4fc,#00e0a4);
+  background:linear-gradient(100deg,#f0c000,#d99a14,#f0a8c8,#f0c000);
   background-size:280% 100%;
   -webkit-background-clip:text;background-clip:text;color:transparent;
   animation:shimmer 7s linear infinite;
@@ -263,8 +262,8 @@ body{
 }
 .meter-fill{
   height:100%;width:0%;border-radius:999px;
-  background:linear-gradient(90deg,#00e0a4,#38bdf8,#a5b4fc);
-  box-shadow:0 0 18px rgba(56,189,248,.45);
+  background:linear-gradient(90deg,#f0c000,#d99a14,#f0a8c8);
+  box-shadow:0 0 18px rgba(217,154,20,.45);
   transition:width .9s cubic-bezier(.22,1,.36,1);
 }
 .meter-legend{
@@ -291,6 +290,7 @@ body.odendi .num{background:linear-gradient(180deg,#fff,#a9f0d4);-webkit-backgro
 
 @media (max-width:620px){
   .wrap{padding:20px 15px 48px}
+  .brand-logo{height:24px}
   .card{padding:19px}
   .clock{gap:2px}
   .lbl{letter-spacing:.06em;font-size:10px}

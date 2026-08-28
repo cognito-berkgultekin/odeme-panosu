@@ -9,11 +9,11 @@
 <meta property="og:title" content="Cognito · Ödeme Takip Panosu">
 <meta property="og:description" content="İmza ve ödeme sürecinin canlı sayacı.">
 <meta name="theme-color" content="#0a0e17">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230a0e17'/%3E%3Ccircle cx='32' cy='32' r='16' fill='none' stroke='%2300e0a4' stroke-width='5' stroke-linecap='round' stroke-dasharray='75 25'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23080b12'/%3E%3Ccircle cx='32' cy='32' r='16' fill='none' stroke='%23f0c000' stroke-width='6' stroke-linecap='round' stroke-dasharray='72 28'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=2">
 </head>
 <body>
 
@@ -24,8 +24,7 @@
   <!-- ÜST BAR -->
   <header class="topbar">
     <div class="brand">
-      <span class="brand-mark" aria-hidden="true"></span>
-      <span class="brand-name">cognito</span>
+      <img class="brand-logo" src="cognito-logo.png" alt="Cognito">
     </div>
     <div class="live-pill"><span class="dot"></span> Canlı takip</div>
   </header>
@@ -147,7 +146,20 @@
 
 </div>
 
-<script src="config.js"></script>
-<script src="app.js"></script>
+<script>
+/* GitHub Pages dosyalari 10 dakika onbellekliyor. Proje bilgileri
+   guncellenince eski tarihlerin gorunmemesi icin config.js ve app.js
+   dakikalik bir surum etiketiyle yukleniyor. */
+(function () {
+  var v = "?v=" + Math.floor(Date.now() / 60000);
+  function yukle(src, sonra) {
+    var s = document.createElement("script");
+    s.src = src + v;
+    s.onload = sonra || null;
+    document.head.appendChild(s);
+  }
+  yukle("config.js", function () { yukle("app.js"); });
+})();
+</script>
 </body>
 </html>
