@@ -10,6 +10,7 @@ tekrar tekrar kullanılabilir.
 |---|---|
 | Sayaç 1 | Sözleşmenin imzalandığı tarihten bu yana geçen süre — gün / saat / dakika / saniye |
 | Sayaç 2 | Ödeme vadesine kalan süre (geri sayım). Vade geçtiyse kırmızıya döner ve yukarı saymaya başlar |
+| Logo | Üst barda `cognito-logo.png`; paleti logonun altın tonuna göre kurulu |
 | Bilgi kartları | İlk teklif tarihi · Beklenen imza tarihi · Cognito imza tarihi · Karşı taraf imza tarihi · Ödeme vadesi · Gönüllerden geçen ödeme tarihi · Kalan gün |
 | Süreç çizelgesi | Tüm kilometre taşları tarih sırasıyla dikey zaman çizelgesinde |
 | Dünyada neler oldu | Beklenen imza tarihinden bugüne kadar geçen sürede yaşanan önemli olaylar + otomatik hesaplanan satırlar |
@@ -31,6 +32,9 @@ const PROJELER = {
     proje:    "AYGÖS Projesi",
     musteri:  "HAVELSAN",
     aciklama: "Sözleşme karşılıklı imzalandı. Ödeme vadesi işliyor.",
+
+    odemeAdi:       "Avans ödeme",     // "... vadesine kalan süre" gibi yerlerde
+    odemeAdiIyelik: "Avans ödemesi",   // "... bekleniyor / tamamlandı" gibi yerlerde
 
     bizimAdimiz:   "Cognito A.Ş.",
     karsiTarafAdi: "HAVELSAN",
@@ -68,6 +72,10 @@ https://<kullanici>.github.io/<repo>/?p=aygos
 `?p=` yazılmazsa `VARSAYILAN_PROJE` içinde belirtilen proje açılır.
 
 **Tarih formatı:** `YYYY-AA-GG` (`"2026-08-01"`) veya `GG.AA.YYYY` (`"01.08.2026"`).
+
+**Ödemenin adı** `odemeAdi` / `odemeAdiIyelik` ile değişir. AYGÖS projesinde
+"Avans ödeme" / "Avans ödemesi" kullanılıyor; boş bırakılırsa sayfa her yerde
+sadece "Ödeme" der. Hakediş, bakiye vb. için de aynı şekilde ayarlanır.
 
 **Ödeme vadesi** varsayılan olarak *karşı taraf imzası + `vadeGun`* şeklinde
 otomatik hesaplanır. Sözleşmede sabit bir tarih varsa `odemeTarihi` yazın,
@@ -130,6 +138,7 @@ Taban seviyenin altına hiç inmez; minnet biter gibi bir mesaj vermez.
 | `musteri` | Müşteri adı |
 | `aciklama` | Alt açıklama |
 | `biz` / `karsi` | Taraf isimleri |
+| `odemeadi` / `odemeadiiyelik` | Ödemenin adı (örn. Avans ödeme) |
 | `teklif` | İlk bütçesel teklif tarihi |
 | `beklenen` | İmzalanmasını beklediğimiz tarih |
 | `bizimimza` | Cognito imza tarihi |

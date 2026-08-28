@@ -113,6 +113,8 @@
       maks: "minnetMaks",
       taban: "minnetTaban",
       erime: "minnetErimeGun",
+      odemeadi: "odemeAdi",
+      odemeadiiyelik: "odemeAdiIyelik",
       not: "not"
     };
 
@@ -149,6 +151,8 @@
     if (c.minnetTaban === undefined || isNaN(+c.minnetTaban)) c.minnetTaban = 0.35;
     if (!c.minnetErimeGun || isNaN(+c.minnetErimeGun)) c.minnetErimeGun = 120;
     if (!c.paraBirimi) c.paraBirimi = "TL";
+    if (!c.odemeAdi) c.odemeAdi = "Ödeme";
+    if (!c.odemeAdiIyelik) c.odemeAdiIyelik = c.odemeAdi;
     if (!c.bizimAdimiz) c.bizimAdimiz = "Cognito A.Ş.";
     if (!c.karsiTarafAdi) c.karsiTarafAdi = c.musteri || "Karşı taraf";
     if (!c.karsiTarafImzaTarihi && c.imzaTarihi) c.karsiTarafImzaTarihi = c.imzaTarihi;
@@ -260,6 +264,12 @@
   var gonul        = tarihCoz(C.gonulTarihi);
   var odemeYapilma = tarihCoz(C.odemeYapilmaTarihi);
 
+  function kucukHarf(t) { return t.charAt(0).toLocaleLowerCase("tr-TR") + t.slice(1); }
+  var O          = C.odemeAdi;            // "Ödeme" / "Avans ödeme"
+  var O_IYE      = C.odemeAdiIyelik;      // "Ödeme" / "Avans ödemesi"
+  var o_kucuk    = kucukHarf(O);
+  var oiye_kucuk = kucukHarf(O_IYE);
+
   var vadeGun = +C.vadeGun;
   var minnetMaks     = +C.minnetMaks;
   var minnetTaban    = +C.minnetTaban;
@@ -352,8 +362,10 @@
     $("odemeVadesi").textContent = odemeVadesi
       ? tarihYaz(odemeVadesi)
       : "İmzadan " + vadeGun + " gün sonra";
+    $("odemeVadesiLabel").textContent = O + " vadesine göre beklenen tarih";
+    $("gonulLabel").textContent = "Gönüllerden geçen " + o_kucuk + " tarihi";
     $("odemeVadesiNot").textContent = odemeElle
-      ? "Sözleşmede belirtilen ödeme tarihi."
+      ? "Sözleşmede belirtilen " + o_kucuk + " tarihi."
       : (karsiImza
           ? C.karsiTarafAdi + " imzası + " + vadeGun + " gün."
           : "İmza tarihi + " + vadeGun + " gün vade.");
@@ -388,9 +400,9 @@
 
     if (odendi) {
       document.body.classList.add("odendi");
-      rozet.textContent = "Ödeme tamamlandı";
+      rozet.textContent = O_IYE + " tamamlandı";
       rozet.classList.add("is-good");
-      lbl.textContent = "Ödeme durumu";
+      lbl.textContent = O + " durumu";
       deger.textContent = "Tamamlandı";
       not.textContent = odemeYapilma
         ? tarihYaz(odemeYapilma) + " tarihinde ödendi. Teşekkür ederiz."
@@ -402,9 +414,9 @@
     if (imzaBekleniyor) {
       rozet.textContent = "İmza bekleniyor";
       rozet.classList.add("is-warn");
-      lbl.textContent = "Ödeme durumu";
+      lbl.textContent = O + " durumu";
       deger.textContent = "İmza sonrası";
-      not.textContent = "Sözleşme imzalandığında ödeme takvimi başlayacak.";
+      not.textContent = "Sözleşme imzalandığında " + o_kucuk + " takvimi başlayacak.";
       kart.classList.add("accent-warn");
       return;
     }
@@ -412,35 +424,35 @@
     var gecikme = odemeVadesi ? gunFarki(odemeVadesi, bugunBasi()) : null;
 
     if (gecikme === null) {
-      rozet.textContent = "Ödeme bekleniyor";
+      rozet.textContent = O_IYE + " bekleniyor";
       deger.textContent = "—";
-      not.textContent = "Ödeme tarihi tanımlı değil.";
+      not.textContent = O + " tarihi tanımlı değil.";
       return;
     }
 
     if (gecikme > 0) {
-      rozet.textContent = gecikme + " gündür ödeme bekleniyor";
+      rozet.textContent = gecikme + " gündür " + oiye_kucuk + " bekleniyor";
       rozet.classList.add("is-bad");
       lbl.textContent = "Vade tarihinden bu yana";
       deger.textContent = gecikme + " gün";
-      not.textContent = "Ödemenin yapılması gereken tarih geçti.";
+      not.textContent = "Vade tarihi geçti, " + oiye_kucuk + " hâlâ bekleniyor.";
       kart.classList.add("accent-bad");
       $("anaSayacKart").classList.add("is-late");
       $("geriSayimKart").classList.add("is-late");
     } else if (gecikme === 0) {
-      rozet.textContent = "Ödeme günü bugün";
+      rozet.textContent = O + " günü bugün";
       rozet.classList.add("is-warn");
-      lbl.textContent = "Ödeme günü";
+      lbl.textContent = O + " günü";
       deger.textContent = "Bugün";
-      not.textContent = "Ödemenin bugün yapılması bekleniyor.";
+      not.textContent = O_IYE + " bugün bekleniyor.";
       kart.classList.add("accent-warn");
     } else {
-      rozet.textContent = Math.abs(gecikme) + " gün içinde ödeme";
+      rozet.textContent = Math.abs(gecikme) + " gün içinde " + oiye_kucuk;
       rozet.classList.add("is-good");
-      lbl.textContent = "Ödeme vadesine kalan gün";
+      lbl.textContent = O + " vadesine kalan gün";
       deger.textContent = Math.abs(gecikme) + " gün";
       not.textContent = odemeElle
-        ? "Sözleşmede belirtilen ödeme tarihine kalan süre."
+        ? "Sözleşmede belirtilen " + o_kucuk + " tarihine kalan süre."
         : vadeGun + " günlük vadenin kalan kısmı.";
       kart.classList.add("accent-good");
     }
@@ -486,7 +498,7 @@
 
     if (gonul) {
       satirlar.push({
-        baslik: "Gönüllerden geçen ödeme tarihi",
+        baslik: "Gönüllerden geçen " + o_kucuk + " tarihi",
         tarih: gonul,
         durum: "love",
         not: "Resmî değil, kalbî"
@@ -499,7 +511,7 @@
     else if (odemeVadesi && +odemeVadesi === +bugun) vadeDurum = "now";
 
     satirlar.push({
-      baslik: "Ödeme vadesine göre beklenen tarih",
+      baslik: O + " vadesine göre beklenen tarih",
       tarih: odemeVadesi,
       durum: vadeDurum,
       not: odemeElle
@@ -508,7 +520,7 @@
     });
 
     satirlar.push({
-      baslik: odendi ? "Ödeme alındı" : "Ödeme",
+      baslik: odendi ? O_IYE + " alındı" : O_IYE,
       tarih: odendi ? odemeYapilma : null,
       durum: odendi ? "done" : (vadeDurum === "late" ? "late" : "now"),
       not: odendi ? "Teşekkür ederiz" : "Bekleniyor"
@@ -640,21 +652,21 @@
     /* --- Sayaç 2: vadeye kalan / vadeden bu yana --- */
     var hedef = gunSonu(odemeVadesi);
     if (odendi) {
-      $("geriSayimBaslik").textContent = "Ödeme durumu";
+      $("geriSayimBaslik").textContent = O + " durumu";
       sayacYaz(0);
       $("geriSayimAlt").textContent = odemeYapilma
-        ? tarihYaz(odemeYapilma) + " tarihinde ödeme alındı. Sayaç mutlu bir şekilde durdu."
-        : "Ödeme alındı. Sayaç mutlu bir şekilde durdu.";
+        ? tarihYaz(odemeYapilma) + " tarihinde " + oiye_kucuk + " alındı. Sayaç mutlu bir şekilde durdu."
+        : O_IYE + " alındı. Sayaç mutlu bir şekilde durdu.";
     } else if (!hedef) {
-      $("geriSayimBaslik").textContent = "Ödeme vadesine kalan süre";
+      $("geriSayimBaslik").textContent = O + " vadesine kalan süre";
       sayacYaz(0);
       $("geriSayimAlt").textContent = "Vade tarihi, imza tamamlandığında hesaplanacak.";
     } else if (hedef > simdi) {
-      $("geriSayimBaslik").textContent = "Ödeme vadesine kalan süre";
+      $("geriSayimBaslik").textContent = O + " vadesine kalan süre";
       sayacYaz(hedef - simdi);
-      $("geriSayimAlt").textContent = tarihYaz(odemeVadesi) + " tarihine kadar ödeme bekleniyor.";
+      $("geriSayimAlt").textContent = tarihYaz(odemeVadesi) + " tarihine kadar " + oiye_kucuk + " bekleniyor.";
     } else {
-      $("geriSayimBaslik").textContent = "Ödeme vadesinin üzerinden geçen süre";
+      $("geriSayimBaslik").textContent = O + " vadesinin üzerinden geçen süre";
       sayacYaz(simdi - hedef);
       $("geriSayimKart").classList.add("is-late");
       $("geriSayimAlt").textContent = "Vade tarihi " + tarihYaz(odemeVadesi) + " idi.";

@@ -15,7 +15,11 @@ const PROJELER = {
     // --- Kimlik ---
     proje:        "AYGÖS Projesi",
     musteri:      "HAVELSAN",
-    aciklama:     "Sözleşme karşılıklı imzalandı. Ödeme vadesi işliyor.",
+    aciklama:     "Sözleşme karşılıklı imzalandı. Avans ödeme vadesi işliyor.",
+
+    // --- Ödemenin adı (başka projede "Ödeme" / "Hakediş ödemesi" olabilir) ---
+    odemeAdi:        "Avans ödeme",     // "... vadesine kalan süre" gibi yerlerde
+    odemeAdiIyelik:  "Avans ödemesi",   // "... bekleniyor / tamamlandı" gibi yerlerde
 
     // --- Taraflar ---
     bizimAdimiz:   "Cognito A.Ş.",   // Bizim taraf
@@ -30,7 +34,7 @@ const PROJELER = {
     // --- Ödeme ---
     vadeGun:      45,                // Yalnızca odemeTarihi null ise kullanılır
     odemeTarihi:  "2026-09-15",      // Ödeme vadesine göre beklenen tarih (sabit)
-    gonulTarihi:  "2026-08-30",  // Gönüllerden geçen ödeme tarihi
+    gonulTarihi:  "2026-08-30",  // Gönüllerden geçen avans ödeme tarihi
     tutar:        null,          // Örn: 750000  (göstermek istemiyorsanız null)
     paraBirimi:   "TL",
 
