@@ -109,7 +109,9 @@
       pb: "paraBirimi",
       odendi: "odendi",
       odemetarih: "odemeYapilmaTarihi",
-      kat: "minnetKatsayisi",
+      maks: "minnetMaks",
+      taban: "minnetTaban",
+      erime: "minnetErimeGun",
       not: "not"
     };
 
@@ -117,7 +119,8 @@
       if (!q.has(k)) return;
       var v = q.get(k);
       var alan = esle[k];
-      if (alan === "vadeGun" || alan === "minnetKatsayisi" || alan === "tutar") v = +v;
+      if (alan === "vadeGun" || alan === "tutar" ||
+          alan === "minnetMaks" || alan === "minnetTaban" || alan === "minnetErimeGun") v = +v;
       if (alan === "odendi") v = (v === "1" || v === "true" || v === "evet");
       o[alan] = v;
     });
@@ -141,7 +144,9 @@
     var c = Object.assign({}, temel, urlAyarlari());
 
     if (c.vadeGun === undefined || c.vadeGun === null || isNaN(+c.vadeGun)) c.vadeGun = 30;
-    if (!c.minnetKatsayisi || isNaN(+c.minnetKatsayisi)) c.minnetKatsayisi = 7;
+    if (!c.minnetMaks || isNaN(+c.minnetMaks)) c.minnetMaks = 1000000;
+    if (c.minnetTaban === undefined || isNaN(+c.minnetTaban)) c.minnetTaban = 0.35;
+    if (!c.minnetErimeGun || isNaN(+c.minnetErimeGun)) c.minnetErimeGun = 120;
     if (!c.paraBirimi) c.paraBirimi = "TL";
     if (!c.bizimAdimiz) c.bizimAdimiz = "Cognito A.Ş.";
     if (!c.karsiTarafAdi) c.karsiTarafAdi = c.musteri || "Karşı taraf";
@@ -152,22 +157,50 @@
   /* ---------- Minnet seviyeleri ---------- */
 
   var SEVIYELER = [
-    { esik: -1e9, ad: "Sevgiyle bekliyoruz", mesaj: "Süreç planlandığı gibi ilerliyor. Ödeme gününe kadar her şey yolunda; ilginiz ve emeğiniz için şimdiden teşekkür ederiz." },
-    { esik: 0,    ad: "Teşekkür ederiz",     mesaj: "Ödeme tarihi geldi. Süreci takip eden herkese teşekkür ediyoruz; dosya bugün kapanırsa bu sayaç güzel bir anıya dönüşecek." },
-    { esik: 3,    ad: "Minnettarız",         mesaj: "Birkaç gündür bekliyoruz. Bu dosyayı bir adım öne taşıyan herkese içten teşekkürlerimizi iletiyoruz." },
-    { esik: 10,   ad: "Derin minnet",        mesaj: "Sayaç çalışmaya devam ediyor. Ödemenin hızlanması için telefon açan, mail atan, imza peşinde koşan herkes bu ekranın gerçek kahramanı." },
-    { esik: 25,   ad: "Büyük minnet",        mesaj: "Bekleyiş uzadı ama sabrımız da sevgimiz de tam. Bu dosyayı çözen kişiye Cognito ekibi olarak gerçekten minnettar olacağız." },
-    { esik: 45,   ad: "Efsanevi minnet",     mesaj: "Bu sayaç artık kendi hikâyesini yazıyor. Ödemeyi harekete geçiren kişi, şirket tarihimize teşekkürle geçecek." },
-    { esik: 75,   ad: "Destansı minnet",     mesaj: "Sabır bir erdemdir, minnet ise birikimli. Bu dosyayı kapatan kahramana duyacağımız minnetin haddi hesabı olmayacak." },
-    { esik: 120,  ad: "Sonsuz minnet",       mesaj: "Sayaç yeni rekorlar kırıyor. Ödemeyi tamamlayan herkese sonsuz sevgi ve minnetimizi şimdiden gönderiyoruz." }
+    { esik: 1.00, ad: "Doruk noktasında",      mesaj: "Minnetimiz şu anda tam kapasite. Ödeme zamanında geldiği sürece bu gösterge zirvede kalacak ve emeği geçen herkesi orada anacağız." },
+    { esik: 0.95, ad: "Neredeyse tam",         mesaj: "Gösterge hâlâ zirveye çok yakın. Şimdi atılacak küçük bir adım, minneti olduğu gibi korur." },
+    { esik: 0.85, ad: "Hafiften eriyor",       mesaj: "Minnetimiz yavaş yavaş tazeliğini kaybetmeye başladı. Erken ödeme, bu göstergeyi tek hamlede yukarı çeker." },
+    { esik: 0.70, ad: "Gözle görülür azaldı",  mesaj: "Bekleyiş uzadıkça gösterge iniyor. Sevgimiz yerinde duruyor; ama minnetin tazesi makbul." },
+    { esik: 0.55, ad: "Ciddi biçimde azaldı",  mesaj: "Gösterge yarıya yaklaştı. Bu dosyayı bugün hareket ettiren kişi, ibrenin yönünü tek başına değiştirebilir." },
+    { esik: 0.40, ad: "Kritik seviye",         mesaj: "Minnet göstergesi kritik bölgede. Yine de tabana kadar inmeyecek; Cognito olarak küsmeyi bilmiyoruz." },
+    { esik: 0.00, ad: "Yedek depoda",          mesaj: "Gösterge tabanda seyrediyor ama sıfırlanmıyor. Ödeme geldiği an tek hamlede tavana çıkmaya hazır." }
   ];
 
-  function seviyeBul(gecikmeGun) {
-    var s = SEVIYELER[0];
+  function seviyeBul(oran) {
     for (var i = 0; i < SEVIYELER.length; i++) {
-      if (gecikmeGun >= SEVIYELER[i].esik) s = SEVIYELER[i];
+      if (oran >= SEVIYELER[i].esik) return SEVIYELER[i];
     }
-    return s;
+    return SEVIYELER[SEVIYELER.length - 1];
+  }
+
+  /* Minnet oranı: gösterge tam dolu (1.00) başlar.
+     Gönüllerden geçen tarih geçilince yavaşça, ödeme vadesi de geçilince
+     daha belirgin biçimde erir; ama asla tabanın altına inmez.        */
+  var FAZ1_KAYIP = 0.10;
+
+  function minnetOrani(simdi) {
+    if (odendi) return 1;
+
+    var vadeSon  = gunSonu(odemeVadesi);
+    var gonulSon = gunSonu(gonul);
+
+    var faz2Bas = vadeSon;
+    var faz2Tavan = 1;
+
+    if (gonulSon && vadeSon && gonulSon < vadeSon) {
+      if (simdi <= gonulSon) return 1;
+      if (simdi < vadeSon) {
+        return 1 - FAZ1_KAYIP * ((simdi - gonulSon) / (vadeSon - gonulSon));
+      }
+      faz2Tavan = 1 - FAZ1_KAYIP;
+    } else if (gonulSon && !vadeSon) {
+      faz2Bas = gonulSon;
+    }
+
+    if (!faz2Bas || simdi <= faz2Bas) return 1;
+
+    var t = Math.min(1, ((simdi - faz2Bas) / GUN_MS) / minnetErimeGun);
+    return faz2Tavan - (faz2Tavan - minnetTaban) * t;
   }
 
   /* ---------- Dünyada neler oldu: hazır olay havuzu ----------
@@ -218,6 +251,9 @@
   var odemeYapilma = tarihCoz(C.odemeYapilmaTarihi);
 
   var vadeGun = +C.vadeGun;
+  var minnetMaks     = +C.minnetMaks;
+  var minnetTaban    = +C.minnetTaban;
+  var minnetErimeGun = +C.minnetErimeGun;
 
   // Sözleşmenin yürürlüğe girdiği an: iki imzadan geç olanı
   var tamImza = null;
@@ -594,40 +630,19 @@
     }
 
     /* --- Sevgi & minnet --- */
-    var minnetMs = baslangic ? Math.max(0, son - baslangic) : 0;
-    $("minnetSayac").textContent = sayiYaz((minnetMs / 1000) * (+C.minnetKatsayisi));
+    var oran = minnetOrani(simdi);
+    $("minnetSayac").textContent = sayiYaz(minnetMaks * oran);
 
-    var gecikmeGun = (odemeVadesi && !odendi) ? gunFarki(odemeVadesi, bugunBasi()) : -1;
-    var sev;
-
-    if (odendi) {
-      sev = {
-        ad: "Sonsuz teşekkür",
-        mesaj: "Ödeme tamamlandı. Bu süreci hızlandıran herkese Cognito ekibi olarak içten teşekkürlerimizi sunuyoruz."
-      };
-    } else if (gonul && bugunBasi() > gonul && gecikmeGun < 0) {
-      sev = {
-        ad: "Gönül sayacı çalışıyor",
-        mesaj: "Gönlümüzden geçen tarih geçti, resmî vade henüz gelmedi. Ödemeyi erkene çekebilen herkese duyduğumuz sevgi tarifsiz olur."
-      };
-    } else {
-      sev = seviyeBul(gecikmeGun);
-    }
+    var sev = odendi
+      ? {
+          ad: "Sonsuz teşekkür",
+          mesaj: "Ödeme tamamlandı, gösterge tavana vurdu. Bu süreci hızlandıran herkese Cognito ekibi olarak içten teşekkürlerimizi sunuyoruz."
+        }
+      : seviyeBul(oran);
 
     $("minnetSeviye").textContent = sev.ad;
     $("minnetMesaj").textContent  = sev.mesaj;
-
-    var oran;
-    if (odendi) {
-      oran = 100;
-    } else if (gecikmeGun < 0) {
-      var toplam = (baslangic && odemeVadesi) ? Math.max(1, gunFarki(baslangic, odemeVadesi)) : 30;
-      var gecen  = Math.max(0, toplam + gecikmeGun);
-      oran = 5 + (gecen / toplam) * 17;
-    } else {
-      oran = 25 + Math.min(1, gecikmeGun / 120) * 75;
-    }
-    $("minnetBar").style.width = Math.max(3, Math.min(100, oran)).toFixed(1) + "%";
+    $("minnetBar").style.width = (oran * 100).toFixed(1) + "%";
 
     try {
       $("sonGuncelleme").textContent = "Son güncelleme: " + simdi.toLocaleString("tr-TR", {

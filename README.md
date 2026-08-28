@@ -13,7 +13,7 @@ tekrar tekrar kullanılabilir.
 | Bilgi kartları | Beklenen imza tarihi · Cognito imza tarihi · Karşı taraf imza tarihi · Ödeme vadesi · Gönüllerden geçen ödeme tarihi · Kalan gün |
 | Süreç çizelgesi | Tüm kilometre taşları tarih sırasıyla dikey zaman çizelgesinde |
 | Dünyada neler oldu | Beklenen imza tarihinden bugüne kadar geçen sürede yaşanan önemli olaylar + otomatik hesaplanan satırlar |
-| Sevgi & minnet göstergesi | Her saniye artan minnet sayacı, dolan bar ve gecikmeye göre değişen seviye |
+| Sevgi & minnet göstergesi | **Tam dolu başlar**, gecikme oldukça erir. Ödeme gelirse tavana geri çıkar |
 
 Ödeme geldiğinde `odendi: true` yapılır; sayaçlar durur, sayfa yeşile döner ve
 teşekkür moduna geçer.
@@ -48,7 +48,9 @@ const PROJELER = {
     odendi:             false,
     odemeYapilmaTarihi: null,
 
-    minnetKatsayisi: 7,          // saniyede biriken minnet puanı
+    minnetMaks:     1000000,     // tam kapasite minnet miktarı
+    minnetTaban:    0.35,        // en fazla bu orana kadar düşer (%35)
+    minnetErimeGun: 120,         // vadeden sonra kaç günde tabana yaklaşır
 
     not: "Bu pano yalnızca bilgilendirme amaçlıdır."
   }
@@ -96,7 +98,23 @@ Güneş etrafında aldığı yol, dolunay sayısı, mevsim değişimi ve geçen 
 
 ---
 
-## 3. Deploy etmeden hızlı yol: linkten ayar
+## 3. Sevgi & minnet göstergesi nasıl çalışır?
+
+Gösterge **tam kapasitede (%100) başlar** ve gecikme oldukça yavaşça erir —
+böylece "beklet, minnet artsın" gibi ters bir teşvik oluşmaz:
+
+| Aşama | Gösterge |
+|---|---|
+| Gönüllerden geçen tarihe kadar | %100, tam dolu |
+| Gönül tarihi → ödeme vadesi arası | %100'den %90'a doğru yavaşça iner |
+| Vade geçtikten sonra | `minnetErimeGun` gün içinde `minnetTaban` seviyesine iner |
+| Ödeme alınınca | Anında %100'e döner, "Sonsuz teşekkür" |
+
+Taban seviyenin altına hiç inmez; minnet biter gibi bir mesaj vermez.
+
+---
+
+## 4. Deploy etmeden hızlı yol: linkten ayar
 
 `config.js`'e dokunmadan tek seferlik pano üretebilirsiniz:
 
@@ -120,7 +138,7 @@ Güneş etrafında aldığı yol, dolunay sayısı, mevsim değişimi ve geçen 
 | `tutar` / `pb` | Tutar / para birimi |
 | `odendi` | `1` yapılırsa teşekkür moduna geçer |
 | `odemetarih` | Ödemenin yapıldığı tarih |
-| `kat` | Minnet katsayısı |
+| `maks` / `taban` / `erime` | Minnet göstergesi ayarları |
 | `not` | Sayfa altındaki not |
 
 Link parametreleri `config.js`'i **ezer** — yani `?p=aygos&odendi=1` ile panoyu
@@ -128,7 +146,7 @@ anında teşekkür moduna alabilirsiniz.
 
 ---
 
-## 4. GitHub Pages'e yayınlama
+## 5. GitHub Pages'e yayınlama
 
 ```bash
 git init && git add . && git commit -m "Cognito odeme takip panosu"
@@ -152,7 +170,7 @@ https://<kullanici>.github.io/<repo>/
 
 ---
 
-## 5. Yerelde denemek
+## 6. Yerelde denemek
 
 ```bash
 python -m http.server 8087

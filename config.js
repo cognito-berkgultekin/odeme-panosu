@@ -36,8 +36,10 @@ const PROJELER = {
     odendi:             false,   // Ödeme geldiyse true yapın
     odemeYapilmaTarihi: null,    // Örn: "2026-09-10"
 
-    // --- Sevgi & Minnet ---
-    minnetKatsayisi: 7,      // Saniyede biriken minnet puanı
+    // --- Sevgi & Minnet (gösterge tam dolu başlar, gecikme oldukça erir) ---
+    minnetMaks:     1000000,   // Tam kapasite minnet miktarı
+    minnetTaban:    0.35,      // En fazla bu orana kadar düşer (0.35 = %35)
+    minnetErimeGun: 120,       // Vadeden sonra kaç günde tabana yaklaşır
 
     // --- Alt not (opsiyonel) ---
     not: "Bu pano yalnızca bilgilendirme amaçlıdır; her saniye canlı olarak güncellenir."
