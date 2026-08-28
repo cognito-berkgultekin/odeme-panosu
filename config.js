@@ -34,7 +34,7 @@ const PROJELER = {
     // --- Ödeme ---
     vadeGun:      45,                // Yalnızca odemeTarihi null ise kullanılır
     odemeTarihi:  "2026-09-15",      // Ödeme vadesine göre beklenen tarih (sabit)
-    gonulTarihi:  "2026-08-30",  // Gönüllerden geçen avans ödeme tarihi
+    gonulTarihi:  "2026-08-31",  // Gönüllerden geçen avans ödeme tarihi
     tutar:        null,          // Örn: 750000  (göstermek istemiyorsanız null)
     paraBirimi:   "TL",
 
