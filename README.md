@@ -10,7 +10,7 @@ tekrar tekrar kullanılabilir.
 |---|---|
 | Sayaç 1 | Sözleşmenin imzalandığı tarihten bu yana geçen süre — gün / saat / dakika / saniye |
 | Sayaç 2 | Ödeme vadesine kalan süre (geri sayım). Vade geçtiyse kırmızıya döner ve yukarı saymaya başlar |
-| Bilgi kartları | Beklenen imza tarihi · Cognito imza tarihi · Karşı taraf imza tarihi · Ödeme vadesi · Gönüllerden geçen ödeme tarihi · Kalan gün |
+| Bilgi kartları | İlk teklif tarihi · Beklenen imza tarihi · Cognito imza tarihi · Karşı taraf imza tarihi · Ödeme vadesi · Gönüllerden geçen ödeme tarihi · Kalan gün |
 | Süreç çizelgesi | Tüm kilometre taşları tarih sırasıyla dikey zaman çizelgesinde |
 | Dünyada neler oldu | Beklenen imza tarihinden bugüne kadar geçen sürede yaşanan önemli olaylar + otomatik hesaplanan satırlar |
 | Sevgi & minnet göstergesi | **Tam dolu başlar**, gecikme oldukça erir. Ödeme gelirse tavana geri çıkar |
@@ -35,12 +35,13 @@ const PROJELER = {
     bizimAdimiz:   "Cognito A.Ş.",
     karsiTarafAdi: "HAVELSAN",
 
+    teklifTarihi:         "2024-12-22",   // ilk bütçesel teklifi verdiğimiz tarih
     beklenenImzaTarihi:   "2025-12-31",   // imzalanmasını beklediğimiz tarih
     cognitoImzaTarihi:    "2026-07-01",   // Cognito A.Ş. imza tarihi
-    karsiTarafImzaTarihi: "2026-08-01",   // HAVELSAN imza tarihi
+    karsiTarafImzaTarihi: "2026-08-03",   // HAVELSAN imza tarihi
 
-    vadeGun:     45,             // karşı taraf imzasından sonraki vade
-    odemeTarihi: null,           // sabit vade tarihi vermek isterseniz "2026-09-15"
+    vadeGun:     45,             // yalnızca odemeTarihi null ise kullanılır
+    odemeTarihi: "2026-09-15",   // sabit ödeme tarihi (vadeGun'u devre dışı bırakır)
     gonulTarihi: "2026-08-30",   // gönüllerden geçen ödeme tarihi
     tutar:       null,           // örn: 750000 (göstermek istemiyorsanız null)
     paraBirimi:  "TL",
@@ -129,6 +130,7 @@ Taban seviyenin altına hiç inmez; minnet biter gibi bir mesaj vermez.
 | `musteri` | Müşteri adı |
 | `aciklama` | Alt açıklama |
 | `biz` / `karsi` | Taraf isimleri |
+| `teklif` | İlk bütçesel teklif tarihi |
 | `beklenen` | İmzalanmasını beklediğimiz tarih |
 | `bizimimza` | Cognito imza tarihi |
 | `imza` | Karşı taraf imza tarihi |

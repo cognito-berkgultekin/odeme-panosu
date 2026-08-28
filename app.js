@@ -99,6 +99,7 @@
       aciklama: "aciklama",
       biz: "bizimAdimiz",
       karsi: "karsiTarafAdi",
+      teklif: "teklifTarihi",
       beklenen: "beklenenImzaTarihi",
       bizimimza: "cognitoImzaTarihi",
       imza: "karsiTarafImzaTarihi",
@@ -211,14 +212,22 @@
   ------------------------------------------------------------ */
 
   var HAZIR_OLAYLAR = [
+    { tarih: "2026-01-01", baslik: "2026 yılına girildi." },
     { tarih: "2026-02-06", baslik: "Milano-Cortina Kış Olimpiyatları başladı." },
+    { tarih: "2026-02-19", baslik: "Ramazan ayı başladı." },
     { tarih: "2026-02-22", baslik: "Kış Olimpiyatları sona erdi, bütün madalyalar sahiplerini buldu." },
-    { tarih: "2026-03-20", baslik: "Ramazan Bayramı geldi ve geçti." },
+    { tarih: "2026-03-03", baslik: "Tam Ay tutulması yaşandı, Ay kızıla boyandı." },
+    { tarih: "2026-03-15", baslik: "98. Oscar ödülleri sahiplerini buldu." },
+    { tarih: "2026-03-20", baslik: "Ramazan Bayramı geldi ve geçti; aynı gün ilkbahar ekinoksu yaşandı." },
+    { tarih: "2026-05-16", baslik: "Eurovision finali yapıldı, yeni birinci belli oldu." },
     { tarih: "2026-05-27", baslik: "Kurban Bayramı geldi ve geçti." },
+    { tarih: "2026-05-30", baslik: "Şampiyonlar Ligi finali oynandı, kupa sahibini buldu." },
     { tarih: "2026-06-11", baslik: "48 takımlı FIFA Dünya Kupası başladı." },
+    { tarih: "2026-06-21", baslik: "Yaz gündönümü: yılın en uzun günü yaşandı." },
     { tarih: "2026-07-19", baslik: "Dünya Kupası finali oynandı, şampiyon kupasını kaldırdı." },
     { tarih: "2026-08-12", baslik: "Avrupa’da 1999’dan bu yana görülen ilk tam güneş tutulması yaşandı." }
   ];
+
 
   var MEVSIMLER = [
     { ay: 2, gun: 20, ad: "ilkbahar" },
@@ -243,6 +252,7 @@
 
   var C = ayarlariGetir();
 
+  var teklif       = tarihCoz(C.teklifTarihi);
   var beklenenImza = tarihCoz(C.beklenenImzaTarihi);
   var cognitoImza  = tarihCoz(C.cognitoImzaTarihi);
   var karsiImza    = tarihCoz(C.karsiTarafImzaTarihi);
@@ -287,6 +297,16 @@
 
     $("altNot").textContent = C.not ||
       "Bu pano yalnızca bilgilendirme amaçlıdır ve her saniye canlı olarak güncellenir.";
+
+    /* --- İlk teklif --- */
+    if (!teklif) {
+      $("teklifKart").hidden = true;
+    } else {
+      $("teklifTarihi").textContent = tarihYaz(teklif);
+      $("teklifNot").textContent = tamImza
+        ? "Sözleşmenin imzalanmasına kadar " + sayiYaz(gunFarki(teklif, tamImza)) + " gün geçti."
+        : "Üzerinden " + sayiYaz(gunFarki(teklif, bugunBasi())) + " gün geçti.";
+    }
 
     /* --- Beklenen imza --- */
     $("beklenenImza").textContent = tarihYaz(beklenenImza);
@@ -419,7 +439,9 @@
       rozet.classList.add("is-good");
       lbl.textContent = "Ödeme vadesine kalan gün";
       deger.textContent = Math.abs(gecikme) + " gün";
-      not.textContent = vadeGun + " günlük vadenin kalan kısmı.";
+      not.textContent = odemeElle
+        ? "Sözleşmede belirtilen ödeme tarihine kalan süre."
+        : vadeGun + " günlük vadenin kalan kısmı.";
       kart.classList.add("accent-good");
     }
   }
@@ -427,6 +449,15 @@
   function zamanCizelgesi() {
     var bugun = bugunBasi();
     var satirlar = [];
+
+    if (teklif) {
+      satirlar.push({
+        baslik: "İlk bütçesel teklifi verdiğimiz tarih",
+        tarih: teklif,
+        durum: "done",
+        not: "Sürecin başlangıcı"
+      });
+    }
 
     satirlar.push({
       baslik: "İmzalanmasını beklediğimiz tarih",

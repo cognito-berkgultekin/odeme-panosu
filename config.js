@@ -21,14 +21,15 @@ const PROJELER = {
     bizimAdimiz:   "Cognito A.Ş.",   // Bizim taraf
     karsiTarafAdi: "HAVELSAN",       // Karşı taraf
 
-    // --- İmza tarihleri (YYYY-AA-GG) ---
+    // --- Tarihler (YYYY-AA-GG) ---
+    teklifTarihi:         "2024-12-22",  // İlk bütçesel teklifi verdiğimiz tarih
     beklenenImzaTarihi:   "2025-12-31",  // İmzalanmasını beklediğimiz tarih
     cognitoImzaTarihi:    "2026-07-01",  // Cognito A.Ş. imza tarihi
-    karsiTarafImzaTarihi: "2026-08-01",  // HAVELSAN imza tarihi
+    karsiTarafImzaTarihi: "2026-08-03",  // HAVELSAN imza tarihi
 
     // --- Ödeme ---
-    vadeGun:      45,            // Karşı taraf imzasından sonraki vade (gün)
-    odemeTarihi:  null,          // Sabit vade tarihi vermek isterseniz "2026-09-15", yoksa null
+    vadeGun:      45,                // Yalnızca odemeTarihi null ise kullanılır
+    odemeTarihi:  "2026-09-15",      // Ödeme vadesine göre beklenen tarih (sabit)
     gonulTarihi:  "2026-08-30",  // Gönüllerden geçen ödeme tarihi
     tutar:        null,          // Örn: 750000  (göstermek istemiyorsanız null)
     paraBirimi:   "TL",
@@ -40,6 +41,12 @@ const PROJELER = {
     minnetMaks:     1000000,   // Tam kapasite minnet miktarı
     minnetTaban:    0.35,      // En fazla bu orana kadar düşer (0.35 = %35)
     minnetErimeGun: 120,       // Vadeden sonra kaç günde tabana yaklaşır
+
+    // --- Projeye özel olaylar (hazır listeye eklenir) ---
+    // Tarihi "beklenenImzaTarihi" ile bugün arasına düşenler otomatik listelenir.
+    olaylar: [
+      { tarih: "2026-07-26", baslik: "Filenin Sultanları dünya şampiyonu oldu." }
+    ],
 
     // --- Alt not (opsiyonel) ---
     not: "Bu pano yalnızca bilgilendirme amaçlıdır; her saniye canlı olarak güncellenir."
