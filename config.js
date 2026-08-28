@@ -32,8 +32,8 @@ const PROJELER = {
     karsiTarafImzaTarihi: "2026-08-03",  // HAVELSAN imza tarihi
 
     // --- Ödeme ---
-    vadeGun:      45,                // Yalnızca odemeTarihi null ise kullanılır
-    odemeTarihi:  "2026-09-15",      // Ödeme vadesine göre beklenen tarih (sabit)
+    vadeGun:      45,            // HAVELSAN imzasından sonraki vade (gün)
+    odemeTarihi:  null,          // null ise: HAVELSAN imzası + vadeGun olarak hesaplanır
     gonulTarihi:  "2026-08-31",  // Gönüllerden geçen avans ödeme tarihi
     tutar:        null,          // Örn: 750000  (göstermek istemiyorsanız null)
     paraBirimi:   "TL",

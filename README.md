@@ -44,8 +44,8 @@ const PROJELER = {
     cognitoImzaTarihi:    "2026-07-01",   // Cognito A.Ş. imza tarihi
     karsiTarafImzaTarihi: "2026-08-03",   // HAVELSAN imza tarihi
 
-    vadeGun:     45,             // yalnızca odemeTarihi null ise kullanılır
-    odemeTarihi: "2026-09-15",   // sabit ödeme tarihi (vadeGun'u devre dışı bırakır)
+    vadeGun:     45,             // HAVELSAN imzasından sonraki vade
+    odemeTarihi: null,           // null ise: HAVELSAN imzası + vadeGun olarak hesaplanır
     gonulTarihi: "2026-08-30",   // gönüllerden geçen ödeme tarihi
     tutar:       null,           // örn: 750000 (göstermek istemiyorsanız null)
     paraBirimi:  "TL",
