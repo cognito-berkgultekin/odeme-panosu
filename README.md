@@ -14,6 +14,7 @@ tekrar tekrar kullanılabilir.
 | Bilgi kartları | İlk teklif tarihi · Beklenen imza tarihi · Cognito imza tarihi · Karşı taraf imza tarihi · Ödeme vadesi · Gönüllerden geçen ödeme tarihi · Kalan gün |
 | Süreç çizelgesi | Tüm kilometre taşları tarih sırasıyla dikey zaman çizelgesinde |
 | Dünyada neler oldu | Beklenen imza tarihinden bugüne kadar geçen sürede yaşanan önemli olaylar + otomatik hesaplanan satırlar |
+| Alınan ödemeler | Taksit taksit tarih + tutar, altında toplam. `odemeler` boşsa kart gizlenir |
 | Sevgi & minnet göstergesi | **Tam dolu başlar**, gecikme oldukça erir. Ödeme gelirse tavana geri çıkar |
 
 Ödeme geldiğinde `odendi: true` yapılır; sayaçlar durur, sayfa yeşile döner ve
@@ -50,8 +51,14 @@ const PROJELER = {
     tutar:       null,           // örn: 750000 (göstermek istemiyorsanız null)
     paraBirimi:  "TL",
 
-    odendi:             false,
-    odemeYapilmaTarihi: null,
+    odendi:             false,   // ödemenin tamamı geldiyse true
+    odemeYapilmaTarihi: null,    // tek seferlik ödeme tarihi (taksitliyse boş)
+
+    odemeler: [                  // taksitli ödeme; boş bırakılırsa kart çıkmaz
+      { tarih: "2026-10-26", tutar: 50000 },
+      { tarih: "2026-11-10", tutar: 50000 },
+      { tarih: "2026-11-19", tutar: 50000 }
+    ],
 
     minnetMaks:     1000000,     // tam kapasite minnet miktarı
     minnetTaban:    0.35,        // en fazla bu orana kadar düşer (%35)
@@ -116,6 +123,7 @@ böylece "beklet, minnet artsın" gibi ters bir teşvik oluşmaz:
 |---|---|
 | Gönüllerden geçen tarihe kadar | %100, tam dolu |
 | Gönül tarihi → ödeme vadesi arası | %100'den %90'a doğru yavaşça iner |
+| `odemeler` içinde ödeme varsa | Son ödeme gününde donar, daha fazla erimez |
 | Vade geçtikten sonra | `minnetErimeGun` gün içinde `minnetTaban` seviyesine iner |
 | Ödeme alınınca | Anında %100'e döner, "Sonsuz teşekkür" |
 

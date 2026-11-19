@@ -15,7 +15,7 @@ const PROJELER = {
     // --- Kimlik ---
     proje:        "AYGÖS Projesi",
     musteri:      "HAVELSAN",
-    aciklama:     "Sözleşme karşılıklı imzalandı. Avans ödeme vadesi işliyor.",
+    aciklama:     "Sözleşme karşılıklı imzalandı. Avans ödemesi taksitler hâlinde alınıyor.",
 
     // --- Ödemenin adı (başka projede "Ödeme" / "Hakediş ödemesi" olabilir) ---
     odemeAdi:        "Avans ödeme",     // "... vadesine kalan süre" gibi yerlerde
@@ -38,8 +38,15 @@ const PROJELER = {
     tutar:        null,          // Örn: 750000  (göstermek istemiyorsanız null)
     paraBirimi:   "TL",
 
-    odendi:             false,   // Ödeme geldiyse true yapın
-    odemeYapilmaTarihi: null,    // Örn: "2026-09-10"
+    odendi:             false,   // Ödemenin tamamı geldiyse true yapın
+    odemeYapilmaTarihi: null,    // Tek seferlik ödeme tarihi (taksitliyse boş bırakın)
+
+    // --- Alınan ödemeler (taksitli ödeme için) ---
+    odemeler: [
+      { tarih: "2026-10-26", tutar: 50000 },
+      { tarih: "2026-11-10", tutar: 50000 },
+      { tarih: "2026-11-19", tutar: 50000 }
+    ],
 
     // --- Sevgi & Minnet (gösterge tam dolu başlar, gecikme oldukça erir) ---
     minnetMaks:     1000000,   // Tam kapasite minnet miktarı

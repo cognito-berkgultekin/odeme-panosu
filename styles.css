@@ -206,6 +206,33 @@ body{
 .tl-date{font-size:13.5px;color:var(--muted);font-family:var(--mono)}
 .tl-note{font-size:13px;color:var(--dim);margin-top:3px}
 
+/* ---------- Alinan odemeler ---------- */
+.pay-card{
+  background:linear-gradient(150deg,rgba(52,211,153,.09),rgba(255,255,255,.025));
+  border-color:rgba(52,211,153,.24);
+}
+.pays{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.pay{
+  display:flex;align-items:baseline;justify-content:space-between;gap:16px;
+  padding:12px 0;border-top:1px solid var(--line);
+}
+.pay:first-child{border-top:0;padding-top:0}
+.pay-date{font-size:15px}
+.pay-no{color:var(--dim);font-size:13px;margin-right:9px;font-family:var(--mono)}
+.pay-amount{
+  font-family:var(--mono);font-weight:700;font-size:16px;
+  color:#a9f0d4;white-space:nowrap;font-variant-numeric:tabular-nums;
+}
+.pay-total{
+  display:flex;align-items:baseline;justify-content:space-between;gap:16px;
+  margin-top:16px;padding-top:16px;border-top:1px solid var(--line-2);
+  font-size:13px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--dim);
+}
+.pay-total b{
+  font-family:var(--mono);font-size:21px;letter-spacing:-.02em;color:#a9f0d4;
+  text-transform:none;font-variant-numeric:tabular-nums;
+}
+
 /* ---------- Dunyada neler oldu ---------- */
 .world-card{
   background:linear-gradient(150deg,rgba(217,154,20,.07),rgba(255,255,255,.025));
