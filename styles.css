@@ -206,6 +206,31 @@ body{
 .tl-date{font-size:13.5px;color:var(--muted);font-family:var(--mono)}
 .tl-note{font-size:13px;color:var(--dim);margin-top:3px}
 
+/* ---------- Katlanabilir bolum ---------- */
+.fold{
+  border:1px solid var(--line);border-radius:var(--r);
+  background:var(--panel);margin-bottom:16px;
+}
+.fold-head{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:18px 22px;cursor:pointer;list-style:none;
+  font-size:12.5px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--dim);
+}
+.fold-head::-webkit-details-marker{display:none}
+.fold-head::before{
+  content:"B8";display:inline-block;color:var(--acc);
+  font-size:13px;line-height:1;transition:transform .2s;
+}
+.fold[open] .fold-head::before{transform:rotate(90deg)}
+.fold-head:hover{color:var(--muted)}
+.fold-badge{
+  margin-left:auto;text-transform:none;letter-spacing:0;
+  font-size:13.5px;font-weight:600;color:#a9f0d4;
+}
+.fold-body{padding:0 22px 22px}
+.fold-body .grid{margin-bottom:0}
+
 /* ---------- Siradaki adimlar ---------- */
 .next-card{
   background:linear-gradient(150deg,rgba(240,192,0,.09),rgba(255,255,255,.025));
@@ -351,6 +376,9 @@ body.odendi .num{background:linear-gradient(180deg,#fff,#a9f0d4);-webkit-backgro
   .clock{gap:2px}
   .lbl{letter-spacing:.06em;font-size:10px}
   .love-head{flex-direction:column}
+  .fold-head{padding:16px 17px}
+  .fold-body{padding:0 17px 17px}
+  .fold-badge{margin-left:0;flex-basis:100%}
   .steps{flex-direction:column;gap:22px}
   .step + .step::before{content:"93";left:26px;top:-17px;transform:none}
   .ev{grid-template-columns:1fr;gap:2px}

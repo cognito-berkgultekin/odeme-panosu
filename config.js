@@ -15,7 +15,7 @@ const PROJELER = {
     // --- Kimlik ---
     proje:        "AYGÖS Projesi",
     musteri:      "HAVELSAN",
-    aciklama:     "Avans ödemesi tamamlandı. Şimdi yeni faturanın kesilmesi bekleniyor.",
+    aciklama:     "Avans ödemesi tamamlandı. Şimdi 1. faturanın kesilmesi bekleniyor.",
 
     // --- Ödemenin adı (başka projede "Ödeme" / "Hakediş ödemesi" olabilir) ---
     odemeAdi:        "Avans ödeme",     // "... vadesine kalan süre" gibi yerlerde
@@ -52,12 +52,13 @@ const PROJELER = {
     // Bir adım bitince burayı güncelleyin; sayaç ve minnet göstergesi
     // her zaman "şu anda beklenen" adıma göre çalışır.
     siradaki: {
-      baslik:        "Yeni faturanın kesilmesi",
+      baslik:        "1. faturanın kesilmesi",                      // Cümle içinde kullanılır
+      sayacBaslik:   "1. faturanın kesilmesine kalan süre",         // Sayaç başlığı
       aciklama:      "Fatura kesilmeden ödeme süreci başlamıyor.",
-      baslangic:     "2026-11-19",   // Bu beklentinin başladığı gün
-      beklenenTarih: null,           // Belli olunca örn. "2026-11-30"
+      baslangic:     "2026-11-19",      // Bu beklentinin başladığı gün
+      beklenenTarih: "2026-12-03",      // Faturanın kesilmesini beklediğimiz tarih
       sonrakiler: [
-        { baslik: "Faturanın ödenmesi", not: "Fatura tarihinden itibaren 45 gün" }
+        { baslik: "1. faturanın ödenmesi", not: "Fatura tarihinden itibaren 45 gün" }
       ]
     },
 

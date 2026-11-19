@@ -437,6 +437,24 @@
     $("odemelerKart").hidden = false;
   }
 
+  function avansBolumu() {
+    $("avansBaslik").textContent = O_IYE;
+
+    var ozet = "";
+    if (odendi) {
+      ozet = "Tamamlandı";
+      if (odemeToplam) ozet += " · " + paraYaz(odemeToplam, C.paraBirimi);
+    } else if (odemeler.length) {
+      ozet = odemeler.length + " ödeme alındı · " + paraYaz(odemeToplam, C.paraBirimi);
+    } else if (odemeVadesi) {
+      ozet = "Vade: " + tarihYaz(odemeVadesi);
+    }
+    $("avansOzet").textContent = ozet;
+
+    // Tamamlanmadıysa bölüm açık gelir; tamamlandıysa katlanmış kalır
+    $("avansKutu").open = !odendi;
+  }
+
   function siradakiYaz() {
     if (!siradaki || !siradaki.baslik) return;
 
@@ -764,7 +782,9 @@
     var hedef = gunSonu(odemeVadesi);
     if (siradaki && siradaki.baslik) {
       var sHedef = gunSonu(siradakiBeklenen);
-      $("geriSayimBaslik").textContent = "Şu anda beklediğimiz";
+      $("geriSayimBaslik").textContent = (sHedef && siradaki.sayacBaslik)
+        ? siradaki.sayacBaslik
+        : "Şu anda beklediğimiz";
       if (!sHedef) {
         sayacYaz(siradakiBaslangic ? simdi - siradakiBaslangic : 0);
         $("geriSayimAlt").textContent = siradaki.baslik + " bekleniyor; beklenen tarih henüz belirlenmedi.";
@@ -847,6 +867,7 @@
   /* ---------- Başlat ---------- */
 
   metniYaz();
+  avansBolumu();
   siradakiYaz();
   odemeleriYaz();
   durumuYaz();

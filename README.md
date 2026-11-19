@@ -14,6 +14,7 @@ tekrar tekrar kullanılabilir.
 | Bilgi kartları | İlk teklif tarihi · Beklenen imza tarihi · Cognito imza tarihi · Karşı taraf imza tarihi · Ödeme vadesi · Gönüllerden geçen ödeme tarihi · Kalan gün |
 | Süreç çizelgesi | Tüm kilometre taşları tarih sırasıyla dikey zaman çizelgesinde |
 | Dünyada neler oldu | Beklenen imza tarihinden bugüne kadar geçen sürede yaşanan önemli olaylar + otomatik hesaplanan satırlar |
+| Avans bölümü | Tamamlanan ödeme aşamasının kartları katlanmış gelir; başlıkta özet görünür |
 | Sıradaki adımlar | Bağımlı işler zinciri: biten adım, şu an beklenen adım, ondan sonrası |
 | Alınan ödemeler | Taksit taksit tarih + tutar, altında toplam. `odemeler` boşsa kart gizlenir |
 | Sevgi & minnet göstergesi | **Tam dolu başlar**, gecikme oldukça erir. Ödeme gelirse tavana geri çıkar |
@@ -62,12 +63,13 @@ const PROJELER = {
     ],
 
     siradaki: {                  // şu an beklenen adım ve ondan sonrası
-      baslik:        "Yeni faturanın kesilmesi",
+      baslik:        "1. faturanın kesilmesi",
+      sayacBaslik:   "1. faturanın kesilmesine kalan süre",
       aciklama:      "Fatura kesilmeden ödeme süreci başlamıyor.",
       baslangic:     "2026-11-19",
-      beklenenTarih: null,       // belli olunca örn. "2026-11-30"
+      beklenenTarih: "2026-12-03",
       sonrakiler: [
-        { baslik: "Faturanın ödenmesi", not: "Fatura tarihinden itibaren 45 gün" }
+        { baslik: "1. faturanın ödenmesi", not: "Fatura tarihinden itibaren 45 gün" }
       ]
     },
 
@@ -81,13 +83,19 @@ const PROJELER = {
 };
 ```
 
-Linki şu şekilde paylaşın:
+Linki sade haliyle paylaşın; `VARSAYILAN_PROJE` içinde yazan proje açılır:
 
 ```
-https://<kullanici>.github.io/<repo>/?p=aygos
+https://<kullanici>.github.io/<repo>/
 ```
 
-`?p=` yazılmazsa `VARSAYILAN_PROJE` içinde belirtilen proje açılır.
+> **Karşı tarafa gönderirken `?p=` eklemeyin.** Adreste proje kodu görünürse
+> alıcıda "değiştirsem başka projeleri görürüm" hissi oluşur.
+
+> **`config.js` herkese açıktır.** Depo public olduğu için sayfayı açan herkes
+> `.../config.js` adresinden dosyanın tamamını okuyabilir. Bu yüzden farklı
+> müşterilerin bilgilerini aynı dosyada tutmayın — her müşteri için ayrı depo
+> açın ya da `config.js` içinde yalnızca linki paylaştığınız projeyi bırakın.
 
 **Tarih formatı:** `YYYY-AA-GG` (`"2026-08-01"`) veya `GG.AA.YYYY` (`"01.08.2026"`).
 
@@ -136,6 +144,10 @@ Güneş etrafında aldığı yol, dolunay sayısı, mevsim değişimi ve geçen 
   geçtikten sonra erimeye başlar.
 - Ana sayaç durmaz; `odendi: true` olsa bile bekleyen bir adım varsa süreç
   devam ediyor sayılır.
+- `beklenenTarih` doluysa sayaç başlığı `sayacBaslik` olur, boşsa
+  "Şu anda beklediğimiz" yazar.
+- Biten ödeme aşamasının kartları "Avans ödemesi" başlığı altında katlanır;
+  `odendi: false` iken bölüm açık gelir.
 
 Bir adım bitince `siradaki`yi bir sonrakiyle değiştirin, biten ödemeyi de
 `odemeler` listesine ekleyin.
