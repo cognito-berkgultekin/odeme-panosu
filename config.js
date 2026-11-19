@@ -15,7 +15,7 @@ const PROJELER = {
     // --- Kimlik ---
     proje:        "AYGÖS Projesi",
     musteri:      "HAVELSAN",
-    aciklama:     "Sözleşme karşılıklı imzalandı. Avans ödemesi taksitler hâlinde alınıyor.",
+    aciklama:     "Avans ödemesi tamamlandı. Şimdi yeni faturanın kesilmesi bekleniyor.",
 
     // --- Ödemenin adı (başka projede "Ödeme" / "Hakediş ödemesi" olabilir) ---
     odemeAdi:        "Avans ödeme",     // "... vadesine kalan süre" gibi yerlerde
@@ -36,17 +36,30 @@ const PROJELER = {
     odemeTarihi:  null,          // null ise: HAVELSAN imzası + vadeGun olarak hesaplanır
     gonulTarihi:  "2026-08-31",  // Gönüllerden geçen avans ödeme tarihi
     tutar:        null,          // Örn: 750000  (göstermek istemiyorsanız null)
-    paraBirimi:   "TL",
+    paraBirimi:   "EUR",
 
-    odendi:             false,   // Ödemenin tamamı geldiyse true yapın
+    odendi:             true,    // Ödemenin tamamı geldiyse true yapın
     odemeYapilmaTarihi: null,    // Tek seferlik ödeme tarihi (taksitliyse boş bırakın)
 
     // --- Alınan ödemeler (taksitli ödeme için) ---
     odemeler: [
-      { tarih: "2026-10-26", tutar: 50000 },
-      { tarih: "2026-11-10", tutar: 50000 },
-      { tarih: "2026-11-19", tutar: 50000 }
+      { ad: "Avans (1. taksit)", tarih: "2026-10-26", tutar: 50000 },
+      { ad: "Avans (2. taksit)", tarih: "2026-11-10", tutar: 50000 },
+      { ad: "Avans (3. taksit)", tarih: "2026-11-19", tutar: 50000 }
     ],
+
+    // --- Şu anda beklediğimiz adım ve ondan sonrası (bağımlı işler) ---
+    // Bir adım bitince burayı güncelleyin; sayaç ve minnet göstergesi
+    // her zaman "şu anda beklenen" adıma göre çalışır.
+    siradaki: {
+      baslik:        "Yeni faturanın kesilmesi",
+      aciklama:      "Fatura kesilmeden ödeme süreci başlamıyor.",
+      baslangic:     "2026-11-19",   // Bu beklentinin başladığı gün
+      beklenenTarih: null,           // Belli olunca örn. "2026-11-30"
+      sonrakiler: [
+        { baslik: "Faturanın ödenmesi", not: "Fatura tarihinden itibaren 45 gün" }
+      ]
+    },
 
     // --- Sevgi & Minnet (gösterge tam dolu başlar, gecikme oldukça erir) ---
     minnetMaks:     1000000,   // Tam kapasite minnet miktarı

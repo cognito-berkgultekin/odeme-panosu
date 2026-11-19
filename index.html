@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
 
@@ -35,6 +35,7 @@
     <h1 id="proje">Ödeme Takip Panosu</h1>
     <p class="lede" id="aciklama">—</p>
     <div class="badges">
+      <span class="badge" id="siradakiRozeti" hidden>—</span>
       <span class="badge" id="durumRozeti">—</span>
       <span class="badge ghost" id="tutarRozeti" hidden>—</span>
     </div>
@@ -65,6 +66,12 @@
       <div class="card-foot" id="geriSayimAlt">—</div>
     </div>
 
+  </section>
+
+  <!-- SIRADAKİ ADIMLAR -->
+  <section class="card next-card" id="siradakiKart" hidden>
+    <div class="card-label">Sıradaki adımlar</div>
+    <ol class="steps" id="adimlar"></ol>
   </section>
 
   <!-- BİLGİ KARTLARI -->

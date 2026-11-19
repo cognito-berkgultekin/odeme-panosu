@@ -184,6 +184,15 @@
   var FAZ1_KAYIP = 0.10;
 
   function minnetOrani(simdi) {
+    // Sıradaki beklenti varsa gösterge ona göre çalışır: beklenen tarih
+    // geçene kadar tam dolu, geçtikten sonra erimeye başlar.
+    if (siradaki && siradaki.baslik) {
+      var h = gunSonu(siradakiBeklenen);
+      if (!h || simdi <= h) return 1;
+      var ts = Math.min(1, ((simdi - h) / GUN_MS) / minnetErimeGun);
+      return 1 - (1 - minnetTaban) * ts;
+    }
+
     if (odendi) return 1;
 
     // Ödeme ulaştıysa gösterge son ödeme gününden sonra erimeye devam etmez
@@ -270,11 +279,15 @@
 
   // Alınan ödemeler: tarihi geçerli olanlar, tarihe göre sıralı
   var odemeler = (C.odemeler || [])
-    .map(function (o) { return { d: tarihCoz(o.tarih), tutar: +o.tutar }; })
+    .map(function (o) { return { d: tarihCoz(o.tarih), tutar: +o.tutar, ad: o.ad }; })
     .filter(function (o) { return o.d && !isNaN(o.tutar); })
     .sort(function (x, y) { return x.d - y.d; });
 
   var odemeToplam = odemeler.reduce(function (t, o) { return t + o.tutar; }, 0);
+  var siradaki          = C.siradaki || null;
+  var siradakiBeklenen  = siradaki ? tarihCoz(siradaki.beklenenTarih) : null;
+  var siradakiBaslangic = siradaki ? tarihCoz(siradaki.baslangic) : null;
+
   var ilkOdeme    = odemeler.length ? odemeler[0].d : null;
   var sonOdeme    = odemeler.length ? odemeler[odemeler.length - 1].d : null;
 
@@ -300,7 +313,9 @@
   var odendi = !!C.odendi;
   var imzaBekleniyor = !tamImza;
   var baslangic = tamImza || beklenenImza;
-  var bitis = odendi ? (sonOdeme || odemeYapilma || new Date()) : null;
+  // Sıradaki bir adım varsa süreç devam ediyor demektir; ana sayaç durmaz
+  var surecBitti = odendi && !(siradaki && siradaki.baslik);
+  var bitis = surecBitti ? (sonOdeme || odemeYapilma || new Date()) : null;
 
   /* ---------- Statik içerik ---------- */
 
@@ -407,10 +422,12 @@
   function odemeleriYaz() {
     if (!odemeler.length) return;
 
-    $("odemelerBaslik").textContent = "Alınan " + o_kucuk + " taksitleri";
     $("odemeler").innerHTML = odemeler.map(function (o, i) {
       return '<li class="pay">' +
-        '<span class="pay-date"><span class="pay-no">' + (i + 1) + '.</span>' + tarihYaz(o.d) + '</span>' +
+        '<span class="pay-info">' +
+        '<span class="pay-name">' + kacar(o.ad || ((i + 1) + ". ödeme")) + '</span>' +
+        '<span class="pay-date">' + tarihYaz(o.d) + '</span>' +
+        '</span>' +
         '<span class="pay-amount">' + paraYaz(o.tutar, C.paraBirimi) + '</span>' +
         '</li>';
     }).join("");
@@ -418,6 +435,48 @@
     $("odemelerToplam").innerHTML =
       '<span>Toplam alınan</span><b>' + paraYaz(odemeToplam, C.paraBirimi) + '</b>';
     $("odemelerKart").hidden = false;
+  }
+
+  function siradakiYaz() {
+    if (!siradaki || !siradaki.baslik) return;
+
+    var adimlar = [];
+
+    if (odendi) {
+      adimlar.push({
+        durum: "ok",
+        baslik: O_IYE + " tamamlandı",
+        not: odemeler.length
+          ? odemeler.length + " taksitte toplam " + paraYaz(odemeToplam, C.paraBirimi)
+          : (sonOdeme ? tarihYaz(sonOdeme) : "")
+      });
+    }
+
+    adimlar.push({
+      durum: "simdi",
+      baslik: siradaki.baslik,
+      not: siradakiBeklenen
+        ? "Beklenen tarih: " + tarihYaz(siradakiBeklenen)
+        : (siradaki.aciklama || "Beklenen tarih henüz belirlenmedi")
+    });
+
+    (siradaki.sonrakiler || []).forEach(function (x) {
+      if (x && x.baslik) adimlar.push({ durum: "sonra", baslik: x.baslik, not: x.not || "" });
+    });
+
+    $("adimlar").innerHTML = adimlar.map(function (a) {
+      return '<li class="step ' + a.durum + '">' +
+        '<span class="step-mark"></span>' +
+        '<span><span class="step-title">' + kacar(a.baslik) + '</span>' +
+        (a.not ? '<span class="step-note">' + kacar(a.not) + '</span>' : '') +
+        '</span></li>';
+    }).join("");
+
+    $("siradakiKart").hidden = false;
+
+    $("siradakiRozeti").textContent = "Şimdi: " + kucukHarf(siradaki.baslik) + " bekleniyor";
+    $("siradakiRozeti").classList.add("is-warn");
+    $("siradakiRozeti").hidden = false;
   }
 
   function durumuYaz() {
@@ -563,7 +622,7 @@
     if (odemeler.length) {
       odemeler.forEach(function (o, i) {
         satirlar.push({
-          baslik: (i + 1) + ". ödeme alındı",
+          baslik: (o.ad || ((i + 1) + ". ödeme")) + " alındı",
           tarih: o.d,
           durum: "done",
           not: paraYaz(o.tutar, C.paraBirimi)
@@ -661,7 +720,7 @@
   /* ---------- Canlı sayaçlar ---------- */
 
   function sayacBasliklari() {
-    if (odendi) {
+    if (surecBitti) {
       $("anaSayacBaslik").textContent = "İmzadan ödemeye kadar geçen süre";
     } else if (imzaBekleniyor) {
       $("anaSayacBaslik").textContent = "İmzayı beklediğimiz tarihten bu yana geçen süre";
@@ -690,7 +749,7 @@
       $("dakika").textContent = ped(gun.dakika);
       $("saniye").textContent = ped(gun.saniye);
 
-      if (odendi) {
+      if (surecBitti) {
         $("anaSayacAlt").textContent = "Sayaç " + tarihYaz(bitis) + " tarihinde durdu. Emeği geçen herkese teşekkür ederiz.";
       } else if (imzaBekleniyor) {
         $("anaSayacAlt").textContent = "Sözleşme imzalandığında bu sayaç ödeme takvimine geçer.";
@@ -703,7 +762,22 @@
 
     /* --- Sayaç 2: vadeye kalan / vadeden bu yana --- */
     var hedef = gunSonu(odemeVadesi);
-    if (odendi) {
+    if (siradaki && siradaki.baslik) {
+      var sHedef = gunSonu(siradakiBeklenen);
+      $("geriSayimBaslik").textContent = "Şu anda beklediğimiz";
+      if (!sHedef) {
+        sayacYaz(siradakiBaslangic ? simdi - siradakiBaslangic : 0);
+        $("geriSayimAlt").textContent = siradaki.baslik + " bekleniyor; beklenen tarih henüz belirlenmedi.";
+      } else if (sHedef > simdi) {
+        sayacYaz(sHedef - simdi);
+        $("geriSayimAlt").textContent =
+          tarihYaz(siradakiBeklenen) + " tarihine kadar " + kucukHarf(siradaki.baslik) + " bekleniyor.";
+      } else {
+        sayacYaz(simdi - sHedef);
+        $("geriSayimKart").classList.add("is-late");
+        $("geriSayimAlt").textContent = "Beklenen tarih " + tarihYaz(siradakiBeklenen) + " idi.";
+      }
+    } else if (odendi) {
       $("geriSayimBaslik").textContent = O + " durumu";
       sayacYaz(0);
       $("geriSayimAlt").textContent = (odemeYapilma || sonOdeme)
@@ -730,17 +804,33 @@
     var oran = minnetOrani(simdi);
     $("minnetSayac").textContent = sayiYaz(minnetMaks * oran);
 
-    var sev = odendi
-      ? {
-          ad: "Sonsuz teşekkür",
-          mesaj: "Ödeme tamamlandı, gösterge tavana vurdu. Bu süreci hızlandıran herkese Cognito ekibi olarak içten teşekkürlerimizi sunuyoruz."
-        }
-      : (odemeler.length
-          ? {
-              ad: "Erime durdu",
-              mesaj: odemeler.length + " ödeme ulaştığı için gösterge daha fazla erimiyor. Süreci hareket ettiren herkese teşekkür ederiz."
-            }
-          : seviyeBul(oran));
+    var sev;
+    if (siradaki && siradaki.baslik) {
+      // Gösterge artık şu anda beklenen adıma göre konuşuyor
+      sev = (oran >= 1)
+        ? {
+            ad: "Doruk noktasında",
+            mesaj: O_IYE + " tamamlandı ve gösterge yeniden tam kapasiteye döndü. Şimdi " +
+                   kucukHarf(siradaki.baslik) + " bekleniyor; süreç aksamadan ilerlerse gösterge zirvede kalır."
+          }
+        : {
+            ad: seviyeBul(oran).ad,
+            mesaj: kucukHarf(siradaki.baslik) + " için beklenen tarih geçti; gösterge o günden beri eriyor. " +
+                   "Bu adımı hareket ettiren kişi ibreyi tek başına yukarı çevirebilir."
+          };
+    } else if (odendi) {
+      sev = {
+        ad: "Sonsuz teşekkür",
+        mesaj: O_IYE + " tamamlandı, gösterge tavana vurdu. Bu süreci hızlandıran herkese Cognito ekibi olarak içten teşekkürlerimizi sunuyoruz."
+      };
+    } else if (odemeler.length) {
+      sev = {
+        ad: "Erime durdu",
+        mesaj: odemeler.length + " ödeme ulaştığı için gösterge daha fazla erimiyor. Süreci hareket ettiren herkese teşekkür ederiz."
+      };
+    } else {
+      sev = seviyeBul(oran);
+    }
 
     $("minnetSeviye").textContent = sev.ad;
     $("minnetMesaj").textContent  = sev.mesaj;
@@ -757,6 +847,7 @@
   /* ---------- Başlat ---------- */
 
   metniYaz();
+  siradakiYaz();
   odemeleriYaz();
   durumuYaz();
   zamanCizelgesi();

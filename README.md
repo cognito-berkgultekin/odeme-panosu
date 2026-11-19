@@ -14,6 +14,7 @@ tekrar tekrar kullanılabilir.
 | Bilgi kartları | İlk teklif tarihi · Beklenen imza tarihi · Cognito imza tarihi · Karşı taraf imza tarihi · Ödeme vadesi · Gönüllerden geçen ödeme tarihi · Kalan gün |
 | Süreç çizelgesi | Tüm kilometre taşları tarih sırasıyla dikey zaman çizelgesinde |
 | Dünyada neler oldu | Beklenen imza tarihinden bugüne kadar geçen sürede yaşanan önemli olaylar + otomatik hesaplanan satırlar |
+| Sıradaki adımlar | Bağımlı işler zinciri: biten adım, şu an beklenen adım, ondan sonrası |
 | Alınan ödemeler | Taksit taksit tarih + tutar, altında toplam. `odemeler` boşsa kart gizlenir |
 | Sevgi & minnet göstergesi | **Tam dolu başlar**, gecikme oldukça erir. Ödeme gelirse tavana geri çıkar |
 
@@ -55,10 +56,20 @@ const PROJELER = {
     odemeYapilmaTarihi: null,    // tek seferlik ödeme tarihi (taksitliyse boş)
 
     odemeler: [                  // taksitli ödeme; boş bırakılırsa kart çıkmaz
-      { tarih: "2026-10-26", tutar: 50000 },
-      { tarih: "2026-11-10", tutar: 50000 },
-      { tarih: "2026-11-19", tutar: 50000 }
+      { ad: "Avans (1. taksit)", tarih: "2026-10-26", tutar: 50000 },
+      { ad: "Avans (2. taksit)", tarih: "2026-11-10", tutar: 50000 },
+      { ad: "Avans (3. taksit)", tarih: "2026-11-19", tutar: 50000 }
     ],
+
+    siradaki: {                  // şu an beklenen adım ve ondan sonrası
+      baslik:        "Yeni faturanın kesilmesi",
+      aciklama:      "Fatura kesilmeden ödeme süreci başlamıyor.",
+      baslangic:     "2026-11-19",
+      beklenenTarih: null,       // belli olunca örn. "2026-11-30"
+      sonrakiler: [
+        { baslik: "Faturanın ödenmesi", not: "Fatura tarihinden itibaren 45 gün" }
+      ]
+    },
 
     minnetMaks:     1000000,     // tam kapasite minnet miktarı
     minnetTaban:    0.35,        // en fazla bu orana kadar düşer (%35)
@@ -114,7 +125,24 @@ Güneş etrafında aldığı yol, dolunay sayısı, mevsim değişimi ve geçen 
 
 ---
 
-## 3. Sevgi & minnet göstergesi nasıl çalışır?
+## 3. Zincirleme adımlar
+
+İş tek bir ödemeden ibaret değilse `siradaki` alanını kullanın. Sayfa her zaman
+**şu an beklenen adıma** göre konuşur:
+
+- İkinci sayaç "Şu anda beklediğimiz" olur; `beklenenTarih` varsa geri sayar,
+  yoksa beklemenin başladığı günden bu yana yukarı sayar.
+- Minnet göstergesi o adıma bağlanır: beklenen tarih geçene kadar tam dolu,
+  geçtikten sonra erimeye başlar.
+- Ana sayaç durmaz; `odendi: true` olsa bile bekleyen bir adım varsa süreç
+  devam ediyor sayılır.
+
+Bir adım bitince `siradaki`yi bir sonrakiyle değiştirin, biten ödemeyi de
+`odemeler` listesine ekleyin.
+
+---
+
+## 4. Sevgi & minnet göstergesi nasıl çalışır?
 
 Gösterge **tam kapasitede (%100) başlar** ve gecikme oldukça yavaşça erir —
 böylece "beklet, minnet artsın" gibi ters bir teşvik oluşmaz:
@@ -124,6 +152,7 @@ böylece "beklet, minnet artsın" gibi ters bir teşvik oluşmaz:
 | Gönüllerden geçen tarihe kadar | %100, tam dolu |
 | Gönül tarihi → ödeme vadesi arası | %100'den %90'a doğru yavaşça iner |
 | `odemeler` içinde ödeme varsa | Son ödeme gününde donar, daha fazla erimez |
+| `siradaki` tanımlıysa | Gösterge tamamen o adıma bağlanır |
 | Vade geçtikten sonra | `minnetErimeGun` gün içinde `minnetTaban` seviyesine iner |
 | Ödeme alınınca | Anında %100'e döner, "Sonsuz teşekkür" |
 
@@ -131,7 +160,7 @@ Taban seviyenin altına hiç inmez; minnet biter gibi bir mesaj vermez.
 
 ---
 
-## 4. Deploy etmeden hızlı yol: linkten ayar
+## 5. Deploy etmeden hızlı yol: linkten ayar
 
 `config.js`'e dokunmadan tek seferlik pano üretebilirsiniz:
 
@@ -165,7 +194,7 @@ anında teşekkür moduna alabilirsiniz.
 
 ---
 
-## 5. GitHub Pages'e yayınlama
+## 6. GitHub Pages'e yayınlama
 
 ```bash
 git init && git add . && git commit -m "Cognito odeme takip panosu"
@@ -189,7 +218,7 @@ https://<kullanici>.github.io/<repo>/
 
 ---
 
-## 6. Yerelde denemek
+## 7. Yerelde denemek
 
 ```bash
 python -m http.server 8087
