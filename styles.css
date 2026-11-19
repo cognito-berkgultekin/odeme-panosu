@@ -219,8 +219,11 @@ body{
 }
 .fold-head::-webkit-details-marker{display:none}
 .fold-head::before{
-  content:"B8";display:inline-block;color:var(--acc);
-  font-size:13px;line-height:1;transition:transform .2s;
+  content:"";flex:none;width:0;height:0;
+  border-left:6px solid var(--acc);
+  border-top:4.5px solid transparent;
+  border-bottom:4.5px solid transparent;
+  transition:transform .2s;
 }
 .fold[open] .fold-head::before{transform:rotate(90deg)}
 .fold-head:hover{color:var(--muted)}
@@ -243,8 +246,11 @@ body{
   border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.03);
 }
 .step + .step::before{
-  content:"92";position:absolute;left:-19px;top:50%;transform:translateY(-50%);
-  color:var(--line-2);font-size:15px;line-height:1;
+  content:"";position:absolute;left:-18px;top:50%;
+  width:7px;height:7px;
+  border-right:2px solid var(--dim);
+  border-top:2px solid var(--dim);
+  transform:translateY(-50%) rotate(45deg);
 }
 .step-mark{
   width:21px;height:21px;border-radius:50%;flex:none;margin-top:1px;
@@ -252,7 +258,12 @@ body{
   border:2px solid var(--line-2);color:var(--dim);
 }
 .step.ok .step-mark{background:var(--good);border-color:var(--good);color:#06281c}
-.step.ok .step-mark::after{content:"¹3"}
+.step.ok .step-mark::after{
+  content:"";width:5px;height:9px;margin-top:-2px;
+  border-right:2px solid #06281c;
+  border-bottom:2px solid #06281c;
+  transform:rotate(45deg);
+}
 .step.simdi{border-color:rgba(240,192,0,.45);background:rgba(240,192,0,.08)}
 .step.simdi .step-mark{background:var(--acc);border-color:var(--acc);animation:pulse 2s infinite}
 .step.sonra{opacity:.6}
@@ -380,7 +391,7 @@ body.odendi .num{background:linear-gradient(180deg,#fff,#a9f0d4);-webkit-backgro
   .fold-body{padding:0 17px 17px}
   .fold-badge{margin-left:0;flex-basis:100%}
   .steps{flex-direction:column;gap:22px}
-  .step + .step::before{content:"93";left:26px;top:-17px;transform:none}
+  .step + .step::before{left:26px;top:-16px;transform:rotate(135deg)}
   .ev{grid-template-columns:1fr;gap:2px}
   .ev-date{font-size:12px}
 }
