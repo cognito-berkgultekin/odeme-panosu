@@ -706,9 +706,17 @@
       if (mev >= 1) {
         otomatik.push({ etiket: "Bu arada", metin: "Mevsim " + mev + " kez değişti." });
       }
+      var durumCumlesi;
+      if (siradaki && siradaki.baslik) {
+        durumCumlesi = "şu an beklenen adım: " + kucukHarf(siradaki.baslik) + ".";
+      } else if (odendi) {
+        durumCumlesi = O_IYE + " tamamlandı.";
+      } else {
+        durumCumlesi = "sözleşme hâlâ " + oiye_kucuk + " bekliyor.";
+      }
       otomatik.push({
         etiket: "Bu arada",
-        metin: "Takvimden " + sayiYaz(gecenGun) + " gün geçti; sözleşme hâlâ ödeme bekliyor."
+        metin: "Takvimden " + sayiYaz(gecenGun) + " gün geçti; " + durumCumlesi
       });
     }
 
